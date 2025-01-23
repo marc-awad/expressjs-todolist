@@ -24,6 +24,12 @@ function isString(input) {
   return typeof input === "string"
 }
 
+function formatDate(inputDate) {
+  const date = new Date(inputDate)
+  const options = { year: "numeric", month: "long", day: "numeric" }
+  return date.toLocaleDateString("fr-FR", options)
+}
+
 //Fonction utilitaire pour créer une carte de tache
 function createTaskCard(task) {
   const taskDiv = document.createElement("div")
@@ -31,7 +37,7 @@ function createTaskCard(task) {
   taskDiv.innerHTML = `
             <h2>${task.name}</h2>
             <p>${task.description}</p>
-            <p>Echeance : ${task.deadline}</p>
+            <p>Écheance : ${formatDate(task.deadline)}</p>
             <p>${task.completed ? "Terminé" : "En cours"}</p>
             <button class="deleteButton" data-task-id="${
               task.id
@@ -167,6 +173,7 @@ buttonAddTask.addEventListener("click", () => {
     .then((response) => response.json())
     .then((data) => {
       loadAllTask()
+      loadStats()
     })
 })
 
