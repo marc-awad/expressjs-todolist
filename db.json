@@ -1,1 +1,18 @@
-{}
+{
+  "tasks": [
+    {
+      "id": 1,
+      "name": "Acheter du lait",
+      "completed": false,
+      "deadline": "2025-01-25",
+      "description": "Acheter du lait frais pour la semaine."
+    },
+    {
+      "id": 2,
+      "name": "Faire les courses",
+      "completed": false,
+      "deadline": "2025-01-26",
+      "description": "Faire les courses pour la nourriture et les produits ménagers."
+    }
+  ]
+}
