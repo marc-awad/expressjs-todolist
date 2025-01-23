@@ -38,6 +38,9 @@ function loadAllTask() {
       data.forEach((task) => {
         createTaskCard(task)
       })
+      if (allTaskDiv.children.length === 0) {
+        allTaskDiv.style.display = "none"
+      }
     })
   loadStats()
 }
