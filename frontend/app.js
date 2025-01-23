@@ -14,6 +14,16 @@ const resetAllTaskButton = document.getElementById("resetAllTasks")
 const API_URL = "http://localhost:3001/api/advanced/tasks"
 const JSON_URL = "http://localhost:3001/db"
 
+function isValideDate(inputDate) {
+  const currentDate = new Date()
+  const enteredDate = new Date(inputDate)
+  return enteredDate >= currentDate
+}
+
+function isString(input) {
+  return typeof input === "string"
+}
+
 //Fonction utilitaire pour créer une carte de tache
 function createTaskCard(task) {
   const taskDiv = document.createElement("div")
@@ -120,6 +130,25 @@ buttonAddTask.addEventListener("click", () => {
 
   if (taskName === "" || taskDeadline === "" || taskDescription === "") {
     alert("Tous les champs sont obligatoires")
+    return
+  }
+
+  if (taskDeadline !== "" && !isValideDate(taskDeadline)) {
+    alert("La date d'echeance doit etre dans le futur")
+    return
+  }
+
+  if (!isString(taskName) || !isNaN(taskName.trim())) {
+    alert(
+      "Le nom de la tâche doit être une chaîne de caractères et ne peut pas être juste un nombre"
+    )
+    return
+  }
+
+  if (!isString(taskDescription) || !isNaN(taskDescription.trim())) {
+    alert(
+      "La description de la tâche doit être une chaîne de caractères et ne peut pas être juste un nombre"
+    )
     return
   }
 
