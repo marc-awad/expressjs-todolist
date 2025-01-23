@@ -46,65 +46,75 @@ function createTaskCard(task) {
 }
 
 //Fonction pour charger toutes les taches
-function loadAllTask() {
-  fetch(`${JSON_URL}/tasks`)
-    .then((response) => response.json())
-    .then((data) => {
-      allTaskDiv.innerHTML = ""
-      data.forEach((task) => {
-        createTaskCard(task)
-      })
-      if (allTaskDiv.children.length === 0) {
-        allTaskDiv.style.display = "none"
-      }
+async function loadAllTask() {
+  try {
+    const response = await fetch(`${JSON_URL}/tasks`)
+    const data = await response.json()
+    allTaskDiv.innerHTML = ""
+    data.forEach((task) => {
+      createTaskCard(task)
     })
-  loadStats()
+    if (allTaskDiv.children.length === 0) {
+      allTaskDiv.style.display = "none"
+    }
+    console.log("rechargement des stats")
+    await loadStats()
+  } catch (error) {
+    console.error("Erreur lors du chargement des tâches :", error)
+  }
 }
 
 //Fonction pour charger les statistiques
-function loadStats() {
-  fetch(`${API_URL}/stats`)
-    .then((response) => response.json())
-    .then((data) => {
-      divStatNbTasks.innerHTML = `Nombre de taches : ${data.totalTasks}`
-      divStatNbTasksCompleted.innerHTML = `Nombre de taches terminées : ${data.completedTasks}`
-      divStatNbLateTask.innerHTML = `Nombre de taches en retard : ${data.lateTasks}`
-    })
+async function loadStats() {
+  try {
+    const response = await fetch(`${API_URL}/stats`)
+    const data = await response.json()
+    divStatNbTasks.innerHTML = `Nombre de taches : ${data.totalTasks}`
+    divStatNbTasksCompleted.innerHTML = `Nombre de taches terminées : ${data.completedTasks}`
+    divStatNbLateTask.innerHTML = `Nombre de taches en retard : ${data.lateTasks}`
+  } catch (error) {
+    console.error("Erreur lors du chargement des statistiques :", error)
+  }
 }
 
-function loadSearchedTask(taskName) {
+async function loadSearchedTask(taskName) {
   console.log(taskName)
-  fetch(`${API_URL}/search?query=${taskName}`)
-    .then((response) => response.json())
-    .then((data) => {
-      allTaskDiv.innerHTML = ""
-      data.forEach((task) => {
-        createTaskCard(task)
-      })
+  try {
+    const response = await fetch(`${API_URL}/search?query=${taskName}`)
+    const data = await response.json()
+    allTaskDiv.innerHTML = ""
+    data.forEach((task) => {
+      createTaskCard(task)
     })
+  } catch (error) {
+    console.error("Erreur lors de la recherche de tâches :", error)
+  }
 }
 
 //Fonction pour charger les taches urgentes
-function loadDueSoonTask() {
-  fetch(`${API_URL}/dueSoon`)
-    .then((response) => response.json())
-    .then((data) => {
-      allTaskDiv.innerHTML = ""
-      data.forEach((task) => {
-        createTaskCard(task)
-      })
+async function loadDueSoonTask() {
+  try {
+    const response = await fetch(`${API_URL}/dueSoon`)
+    const data = await response.json()
+    allTaskDiv.innerHTML = ""
+    data.forEach((task) => {
+      createTaskCard(task)
     })
+  } catch (error) {
+    console.error("Erreur lors du chargement des tâches urgentes :", error)
+  }
 }
 
 //Fonction pour supprimer une tache
-function deleteTask(taskId) {
-  fetch(`${JSON_URL}/tasks/${taskId}`, {
-    method: "DELETE",
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      loadAllTask()
+async function deleteTask(taskId) {
+  try {
+    await fetch(`${JSON_URL}/tasks/${taskId}`, {
+      method: "DELETE",
     })
+    await loadAllTask()
+  } catch (error) {
+    console.error("Erreur lors de la suppression de la tâche :", error)
+  }
 }
 
 //EventsListener pour fermer la popup
@@ -126,10 +136,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 })
 
 //EventListener pour ajouter une nouvelle tache
-buttonAddTask.addEventListener("click", () => {
-  popup.style.display = "none"
-  overlay.style.display = "none"
-
+buttonAddTask.addEventListener("click", async () => {
   const taskName = document.getElementById("taskName").value
   const taskDescription = document.getElementById("taskDescription").value
   const taskDeadline = document.getElementById("taskDeadline").value
@@ -158,23 +165,26 @@ buttonAddTask.addEventListener("click", () => {
     return
   }
 
-  fetch(`${JSON_URL}/tasks`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: taskName,
-      description: taskDescription,
-      deadline: taskDeadline,
-      completed: false,
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      loadAllTask()
-      loadStats()
+  try {
+    await fetch(`${JSON_URL}/tasks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: taskName,
+        description: taskDescription,
+        deadline: taskDeadline,
+        completed: false,
+      }),
     })
+    await loadAllTask()
+    await loadStats()
+    popup.style.display = "none"
+    overlay.style.display = "none"
+  } catch (error) {
+    console.error("Erreur lors de l'ajout de la tâche :", error)
+  }
 })
 
 //EventListener pour supprimer une tache
@@ -185,36 +195,41 @@ allTaskDiv.addEventListener("click", (e) => {
   }
 })
 
-buttonSearchedTask.addEventListener("click", (event) => {
+buttonSearchedTask.addEventListener("click", async (event) => {
   event.preventDefault()
-  loadSearchedTask(document.getElementById("taskSearched").value)
-  loadStats()
+  await loadSearchedTask(document.getElementById("taskSearched").value)
+  await loadStats()
 })
 
-validateAllTaskButton.addEventListener("click", () => {
-  fetch(`${API_URL}/completeAll`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      loadAllTask()
-      loadStats()
+validateAllTaskButton.addEventListener("click", async () => {
+  try {
+    await fetch(`${API_URL}/completeAll`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
+    await loadAllTask()
+    await loadStats()
+  } catch (error) {
+    console.error("Erreur lors de la validation de toutes les tâches :", error)
+  }
 })
 
-resetAllTaskButton.addEventListener("click", () => {
-  fetch(`${API_URL}/resetAll`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      loadAllTask()
-      loadStats()
+resetAllTaskButton.addEventListener("click", async () => {
+  try {
+    await fetch(`${API_URL}/resetAll`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
+    await loadAllTask()
+    await loadStats()
+  } catch (error) {
+    console.error(
+      "Erreur lors de la réinitialisation de toutes les tâches :",
+      error
+    )
+  }
 })
