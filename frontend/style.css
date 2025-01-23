@@ -29,9 +29,9 @@ main {
   align-items: center;
 }
 
-section {
-  width: 80%;
-  max-width: 1200px;
+section,
+div {
+  width: 70%;
   padding: 1rem;
   margin-bottom: 2rem;
   background: #fff;
@@ -50,7 +50,8 @@ label {
   color: #250060;
 }
 
-input {
+input,
+textarea {
   padding: 0.8rem;
   margin-bottom: 1rem;
   border: 1px solid #ccc;
@@ -61,7 +62,8 @@ input {
   transition: border-color 0.3s;
 }
 
-input::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: #888;
   font-size: 16px;
   font-style: italic;
@@ -96,4 +98,45 @@ button:hover {
 #allTaskDiv {
   width: 100%;
   margin-top: 2rem;
+}
+div {
+  width: 95%;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 2px 2px 4px 6px rgba(0, 0, 0, 0.08);
+}
+
+#overlay {
+  display: none;
+  position: fixed;
+  border-radius: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#popup {
+  width: 300px;
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.deleteButton {
+  background-color: rgb(210, 0, 0);
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
 }

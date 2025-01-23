@@ -31,15 +31,12 @@ router.get("/stats", (req, res) => {
   const db = routerDBJSON.db
   const tasks = db.get("tasks").value()
 
-  if (!tasks || tasks.length === 0) {
-    return res.status(404).json({ message: MESSAGES.NO_TASKS_FOUND })
-  }
-
   let endTaskNumber = 0
   let lateTaskNumber = 0
   tasks.forEach((task) => {
     if (task.completed) {
       endTaskNumber += 1
+      return
     }
     if (isLateTask(task.deadline)) {
       lateTaskNumber += 1

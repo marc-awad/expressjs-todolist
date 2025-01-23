@@ -12,6 +12,10 @@
       <h1>Ma liste de tâches</h1>
     </header>
 
+    <buttonUtiliaire>
+      <button id="validateAllTasks">Valider toutes les tâches</button>
+      <button id="resetAllTasks">Reinitialiser toutes les tâches</button>
+    </buttonUtiliaire>
     <main>
       <section>
         <form id="searchForm">
@@ -21,7 +25,7 @@
             name="taskSearched"
             placeholder="Rechercher..."
           />
-          <button type="submit">Rechercher</button>
+          <button type="post" id="searchButton">Rechercher</button>
         </form>
         <button type="button" onclick="openAddTaskForm()">
           Ajouter une nouvelle tâche
@@ -29,14 +33,52 @@
       </section>
 
       <section>
-        <div class="statsDiv">Statistiques 1</div>
-        <div class="statsDiv">Statistiques 2</div>
-        <div class="statsDiv">Statistiques 3</div>
-        <button>Voir les tâches à faire</button>
+        <div class="statsDiv" id="statNbTasks">
+          Statistique en chargement...
+        </div>
+        <div class="statsDiv" id="statNbTasksCompleted">
+          Statistique en chargement...
+        </div>
+        <div class="statsDiv" id="statNbLateTask">
+          Statistique en chargement...
+        </div>
+        <button id="allTaskButton" onclick="loadAllTask()">
+          Voir toutes les tâches
+        </button>
+        <button id="latestTaskButton" onclick="loadDueSoonTask()">
+          Voir les tâches urgentes
+        </button>
       </section>
 
       <section id="allTaskDiv"></section>
     </main>
+    <div id="overlay"></div>
+    <div id="popup">
+      <h3>Ajouter une nouvelle tâche :</h3>
+      <form id="newTaskForm">
+        <label for="taskName">Nom de la tâche :</label>
+        <input
+          type="text"
+          id="taskName"
+          name="taskName"
+          placeholder="Nom de la tâche"
+          required
+        />
+
+        <label for="taskDeadline">Date d'échéance :</label>
+        <input type="date" id="taskDeadline" name="taskDeadline" required />
+
+        <label for="taskDescription">Description :</label>
+        <textarea
+          id="taskDescription"
+          name="taskDescription"
+          placeholder="Décrivez votre tâche"
+          required
+        ></textarea>
+
+        <button type="submit" id="addNewTask">Ajouter</button>
+      </form>
+    </div>
     <script src="app.js"></script>
   </body>
 </html>
