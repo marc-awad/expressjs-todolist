@@ -6,7 +6,7 @@
     <title>To-do List</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" href="to-do-list.png" type="image/png" />
-    </head>
+  </head>
   <body>
     <header>
       <h1>Ma liste de tâches</h1>
@@ -27,7 +27,7 @@
           />
           <button type="post" id="searchButton">Rechercher</button>
         </form>
-        <button type="button" onclick="openAddTaskForm()">
+        <button type="button" id="openAddingTaskFormButton">
           Ajouter une nouvelle tâche
         </button>
       </section>
@@ -53,7 +53,7 @@
       <section id="allTaskDiv"></section>
     </main>
     <div id="overlay"></div>
-    <div id="popup">
+    <div id="addingTaskPopup">
       <h3>Ajouter une nouvelle tâche :</h3>
       <form id="newTaskForm">
         <label for="taskName">Nom de la tâche :</label>

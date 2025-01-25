@@ -1,7 +1,11 @@
-//Récuperation des éléments du DOM
+////////////////////////////////////////////////////////////////////////////////////
+// Variable initialization
+////////////////////////////////////////////////////////////////////////////////////
+
+// DOM elements
 const buttonAddTask = document.getElementById("addNewTask")
 const allTaskDiv = document.getElementById("allTaskDiv")
-const popup = document.getElementById("popup")
+const addingTaskPopup = document.getElementById("addingTaskPopup")
 const overlay = document.getElementById("overlay")
 const divStatNbTasks = document.getElementById("statNbTasks")
 const divStatNbLateTask = document.getElementById("statNbLateTask")
@@ -9,28 +13,50 @@ const divStatNbTasksCompleted = document.getElementById("statNbTasksCompleted")
 const buttonSearchedTask = document.getElementById("searchButton")
 const validateAllTaskButton = document.getElementById("validateAllTasks")
 const resetAllTaskButton = document.getElementById("resetAllTasks")
+const openAddingTaskFormButton = document.getElementById(
+  "openAddingTaskFormButton"
+)
 
-//Constante pour les URL API
+// API URL
 const API_URL = "http://localhost:3001/api/advanced/tasks"
 const JSON_URL = "http://localhost:3001/db"
 
+////////////////////////////////////////////////////////////////////////////////////
+// Utility functions
+////////////////////////////////////////////////////////////////////////////////////
+
+//Function to check if the date is in the future
 function isValideDate(inputDate) {
   const currentDate = new Date()
   const enteredDate = new Date(inputDate)
   return enteredDate >= currentDate
 }
 
+//Function to check if the input is a string
 function isString(input) {
   return typeof input === "string"
 }
 
+//Function to format the date
 function formatDate(inputDate) {
   const date = new Date(inputDate)
   const options = { year: "numeric", month: "long", day: "numeric" }
   return date.toLocaleDateString("fr-FR", options)
 }
 
-//Fonction utilitaire pour créer une carte de tache
+//Function to close the addingTaskPopup
+function closeAddingTaskPopup() {
+  addingTaskPopup.style.display = "none"
+  overlay.style.display = "none"
+}
+
+//Function to open the addingTaskPopup
+function openAddingTaskPopup() {
+  addingTaskPopup.style.display = "block"
+  overlay.style.display = "block"
+}
+
+//Function to create a task card
 function createTaskCard(task) {
   const taskDiv = document.createElement("div")
   taskDiv.className = "taskDiv"
@@ -48,7 +74,11 @@ function createTaskCard(task) {
   allTaskDiv.appendChild(taskDiv)
 }
 
-//Fonction pour charger toutes les taches
+////////////////////////////////////////////////////////////////////////////////////
+// CRUD and Express Router functions
+////////////////////////////////////////////////////////////////////////////////////
+
+//Function to load all tasks from the API
 async function loadAllTask() {
   try {
     const response = await fetch(`${JSON_URL}/tasks`)
@@ -67,7 +97,7 @@ async function loadAllTask() {
   }
 }
 
-//Fonction pour charger les statistiques
+//Function to load the statistics from the API
 async function loadStats() {
   try {
     const response = await fetch(`${API_URL}/stats`)
@@ -80,8 +110,8 @@ async function loadStats() {
   }
 }
 
+//Function to search for tasks by name
 async function loadSearchedTask(taskName) {
-  console.log(taskName)
   try {
     const response = await fetch(`${API_URL}/search?query=${taskName}`)
     const data = await response.json()
@@ -94,7 +124,7 @@ async function loadSearchedTask(taskName) {
   }
 }
 
-//Fonction pour charger les taches urgentes
+//Function to load tasks that are due soon
 async function loadDueSoonTask() {
   try {
     const response = await fetch(`${API_URL}/dueSoon`)
@@ -108,7 +138,7 @@ async function loadDueSoonTask() {
   }
 }
 
-//Fonction pour supprimer une tache
+//Function to delete a task by ID
 async function deleteTask(taskId) {
   try {
     await fetch(`${JSON_URL}/tasks/${taskId}`, {
@@ -120,12 +150,49 @@ async function deleteTask(taskId) {
   }
 }
 
-//EventsListener pour fermer la popup
-overlay.addEventListener("click", (e) => {
-  popup.style.display = "none"
-  overlay.style.display = "none"
-})
+//Function to validate or reset all tasks
+async function validateOrResetAllTasks(action) {
+  try {
+    await fetch(`${API_URL}/${action}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    await loadAllTask()
+    await loadStats()
+  } catch (error) {
+    console.error(
+      "Erreur lors de la modification de toutes les tâches :",
+      error
+    )
+  }
+}
 
+//Function to add a new task
+async function addingANewTask(taskName, taskDescription, taskDeadline) {
+  try {
+    await fetch(`${JSON_URL}/tasks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: taskName,
+        description: taskDescription,
+        deadline: taskDeadline,
+        completed: false,
+      }),
+    })
+    await loadAllTask()
+    await loadStats()
+    await closeAddingTaskPopup()
+  } catch (error) {
+    console.error("Erreur lors de l'ajout de la tâche :", error)
+  }
+}
+
+//Function to complete a task by ID
 async function completeTask(taskId) {
   try {
     await fetch(`${JSON_URL}/tasks/${taskId}`, {
@@ -141,21 +208,13 @@ async function completeTask(taskId) {
   } catch (error) {
     console.error("Erreur lors de la validation de la tâche :", error)
   }
-} 
-
-//Fonction pour ouvrir la popup
-function openAddTaskForm() {
-  popup.style.display = "block"
-  overlay.style.display = "block"
 }
 
-//EventListener pour charger toutes les taches au chargement de la page
-document.addEventListener("DOMContentLoaded", (event) => {
-  console.log("Rechargement appelé")
-  loadAllTask()
-})
+////////////////////////////////////////////////////////////////////////////////////
+//Event Listeners
+////////////////////////////////////////////////////////////////////////////////////
 
-//EventListener pour ajouter une nouvelle tache
+//EventListener to verify input and add a new task
 buttonAddTask.addEventListener("click", async () => {
   const taskName = document.getElementById("taskName").value
   const taskDescription = document.getElementById("taskDescription").value
@@ -185,29 +244,10 @@ buttonAddTask.addEventListener("click", async () => {
     return
   }
 
-  try {
-    await fetch(`${JSON_URL}/tasks`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: taskName,
-        description: taskDescription,
-        deadline: taskDeadline,
-        completed: false,
-      }),
-    })
-    await loadAllTask()
-    await loadStats()
-    popup.style.display = "none"
-    overlay.style.display = "none"
-  } catch (error) {
-    console.error("Erreur lors de l'ajout de la tâche :", error)
-  }
+  addingANewTask(taskName, taskDescription, taskDeadline)
 })
 
-//EventListener pour supprimer une tache
+//EventListener to delete a task
 allTaskDiv.addEventListener("click", (e) => {
   if (e.target.classList.contains("deleteButton")) {
     const taskId = e.target.getAttribute("data-task-id")
@@ -215,6 +255,7 @@ allTaskDiv.addEventListener("click", (e) => {
   }
 })
 
+//EventListener to complete a task
 allTaskDiv.addEventListener("click", (e) => {
   if (e.target.classList.contains("completeButton")) {
     const taskId = e.target.getAttribute("data-task-id")
@@ -222,41 +263,34 @@ allTaskDiv.addEventListener("click", (e) => {
   }
 })
 
+//EventListener to search a task
 buttonSearchedTask.addEventListener("click", async (event) => {
   event.preventDefault()
   await loadSearchedTask(document.getElementById("taskSearched").value)
   await loadStats()
 })
 
+//EventListener to validate tasks
 validateAllTaskButton.addEventListener("click", async () => {
-  try {
-    await fetch(`${API_URL}/completeAll`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    await loadAllTask()
-    await loadStats()
-  } catch (error) {
-    console.error("Erreur lors de la validation de toutes les tâches :", error)
+  validateOrResetAllTasks("completeAll")
+})
+
+//EventListener to reset tasks
+resetAllTaskButton.addEventListener("click", async () => {
+  validateOrResetAllTasks("resetAll")
+})
+
+//EventsListener to close the addingTaskPopup
+overlay.addEventListener("click", (e) => {
+  if (e.target === overlay) {
+    closeAddingTaskPopup()
   }
 })
 
-resetAllTaskButton.addEventListener("click", async () => {
-  try {
-    await fetch(`${API_URL}/resetAll`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    await loadAllTask()
-    await loadStats()
-  } catch (error) {
-    console.error(
-      "Erreur lors de la réinitialisation de toutes les tâches :",
-      error
-    )
-  }
+//EventListener to open the addingTaskPopup
+openAddingTaskFormButton.addEventListener("click", () => {
+  openAddingTaskPopup()
 })
+
+//Loading all task at the start
+loadAllTask()
