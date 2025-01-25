@@ -85,6 +85,7 @@ button {
 button:hover {
   background: #555;
   transform: scale(1.05);
+  cursor: pointer;
 }
 
 .statsDiv {
@@ -134,9 +135,9 @@ div {
 }
 
 .deleteButton {
-  background-color: rgb(210, 0, 0);
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
+  background-color: rgb(144, 0, 0);
+}
+
+.completeButton {
+  background-color: rgb(0, 105, 0);
 }

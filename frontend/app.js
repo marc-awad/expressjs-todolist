@@ -41,7 +41,10 @@ function createTaskCard(task) {
             <p>${task.completed ? "Terminé" : "En cours"}</p>
             <button class="deleteButton" data-task-id="${
               task.id
-            }">Supprimer</button>`
+            }">Supprimer</button>
+            <button class="completeButton" data-task-id="${
+              task.id
+            }">Compléter</button>`
   allTaskDiv.appendChild(taskDiv)
 }
 
@@ -123,6 +126,23 @@ overlay.addEventListener("click", (e) => {
   overlay.style.display = "none"
 })
 
+async function completeTask(taskId) {
+  try {
+    await fetch(`${JSON_URL}/tasks/${taskId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        completed: true,
+      }),
+    })
+    await loadAllTask()
+  } catch (error) {
+    console.error("Erreur lors de la validation de la tâche :", error)
+  }
+} 
+
 //Fonction pour ouvrir la popup
 function openAddTaskForm() {
   popup.style.display = "block"
@@ -192,6 +212,13 @@ allTaskDiv.addEventListener("click", (e) => {
   if (e.target.classList.contains("deleteButton")) {
     const taskId = e.target.getAttribute("data-task-id")
     deleteTask(taskId)
+  }
+})
+
+allTaskDiv.addEventListener("click", (e) => {
+  if (e.target.classList.contains("completeButton")) {
+    const taskId = e.target.getAttribute("data-task-id")
+    completeTask(taskId)
   }
 })
 
