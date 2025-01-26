@@ -42,7 +42,7 @@
         <div class="statsDiv" id="statNbLateTask">
           Statistique en chargement...
         </div>
-        <button id="allTaskButton" onclick="loadAllTask()">
+        <button id="allTaskButton">
           Voir toutes les tâches
         </button>
         <button id="latestTaskButton" onclick="loadDueSoonTask()">
@@ -78,6 +78,14 @@
 
         <button type="submit" id="addNewTask">Ajouter</button>
       </form>
+    </div>
+    <div id="noTasksPopup">
+      <h3>Aucune tâche disponible</h3>
+      <p>
+        Il n'y a aucune tâche pour l'instant, veuillez réessayer après avoir
+        fait une tâche.
+      </p>
+      <button id="closeNoTasksPopup">Fermer</button>
     </div>
     <script src="app.js"></script>
   </body>

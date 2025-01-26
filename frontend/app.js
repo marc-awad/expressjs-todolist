@@ -16,6 +16,10 @@ const resetAllTaskButton = document.getElementById("resetAllTasks")
 const openAddingTaskFormButton = document.getElementById(
   "openAddingTaskFormButton"
 )
+const closeNoTasksPopupButton = document.getElementById("closeNoTasksPopup")
+const noTaskPopup = document.getElementById("noTasksPopup")
+const showAllTaskButton = document.getElementById("allTaskButton")
+const showLatestTaskButton = document.getElementById("latestTaskButton")
 
 // API URL
 const API_URL = "http://localhost:3001/api/advanced/tasks"
@@ -94,6 +98,20 @@ async function loadAllTask() {
     await loadStats()
   } catch (error) {
     console.error("Erreur lors du chargement des tâches :", error)
+  }
+}
+
+//Function to verify if there is no task
+async function checkIfNoTask() {
+  try {
+    const response = await fetch(`${JSON_URL}/tasks`)
+    const data = await response.json()
+    if (data.length === 0) {
+      console.log("Ici")
+      noTaskPopup.style.display = "block"
+    }
+  } catch (error) {
+    console.error("Erreur lors de la recherche de tâches :", error)
   }
 }
 
@@ -265,6 +283,7 @@ allTaskDiv.addEventListener("click", (e) => {
 
 //EventListener to search a task
 buttonSearchedTask.addEventListener("click", async (event) => {
+  checkIfNoTask()
   event.preventDefault()
   await loadSearchedTask(document.getElementById("taskSearched").value)
   await loadStats()
@@ -272,11 +291,13 @@ buttonSearchedTask.addEventListener("click", async (event) => {
 
 //EventListener to validate tasks
 validateAllTaskButton.addEventListener("click", async () => {
+  checkIfNoTask()
   validateOrResetAllTasks("completeAll")
 })
 
 //EventListener to reset tasks
 resetAllTaskButton.addEventListener("click", async () => {
+  checkIfNoTask()
   validateOrResetAllTasks("resetAll")
 })
 
@@ -290,6 +311,21 @@ overlay.addEventListener("click", (e) => {
 //EventListener to open the addingTaskPopup
 openAddingTaskFormButton.addEventListener("click", () => {
   openAddingTaskPopup()
+})
+
+closeNoTasksPopupButton.addEventListener("click", function () {
+  document.getElementById("noTasksPopup").style.display = "none"
+})
+
+showAllTaskButton.addEventListener("click", async () => {
+  checkIfNoTask()
+  await loadAllTask()
+  await loadStats()
+})
+
+showLatestTaskButton.addEventListener("click", async () => {
+  checkIfNoTask()
+  await loadDueSoonTask()
 })
 
 //Loading all task at the start
