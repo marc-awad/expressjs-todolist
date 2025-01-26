@@ -1,11 +1,3 @@
 {
-  "tasks": [
-    {
-      "name": "Tache1",
-      "description": "aaa",
-      "deadline": "8000-10-10",
-      "completed": false,
-      "id": 1
-    }
-  ]
+  "tasks": []
 }

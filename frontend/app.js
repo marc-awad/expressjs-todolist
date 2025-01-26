@@ -123,9 +123,9 @@ async function loadAllTask() {
     if (allTaskDiv.children.length === 0) {
       allTaskDiv.style.display = "none"
     }
-    console.log("rechargement des stats")
     await loadStats()
   } catch (error) {
+    alert("Erreur lors du chargement des tâches. Veuillez réessayer.")
     console.error("Erreur lors du chargement des tâches :", error)
   }
 }
