@@ -203,8 +203,9 @@ async function addingANewTask(taskName, taskDescription, taskDeadline) {
       }),
     })
     await loadAllTask()
-    await loadStats()
     await closeAddingTaskPopup()
+    await loadStats()
+    location.reload()
   } catch (error) {
     console.error("Erreur lors de l'ajout de la tâche :", error)
   }
