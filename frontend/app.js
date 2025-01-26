@@ -48,6 +48,35 @@ function formatDate(inputDate) {
   return date.toLocaleDateString("fr-FR", options)
 }
 
+//Function to check if the task inputs are valid
+function validateTaskInputs(taskName, taskDescription, taskDeadline) {
+  if (!taskName || !taskDescription || !taskDeadline) {
+    alert("Tous les champs sont obligatoires")
+    return false
+  }
+
+  if (!isValideDate(taskDeadline)) {
+    alert("La date d'échéance doit être dans le futur")
+    return false
+  }
+
+  if (!isString(taskName) || !isNaN(taskName.trim())) {
+    alert(
+      "Le nom de la tâche doit être une chaîne de caractères et ne peut pas être juste un nombre"
+    )
+    return false
+  }
+
+  if (!isString(taskDescription) || !isNaN(taskDescription.trim())) {
+    alert(
+      "La description de la tâche doit être une chaîne de caractères et ne peut pas être juste un nombre"
+    )
+    return false
+  }
+
+  return true
+}
+
 //Function to close the addingTaskPopup
 function closeAddingTaskPopup() {
   addingTaskPopup.style.display = "none"
@@ -178,7 +207,6 @@ async function validateOrResetAllTasks(action) {
       },
     })
     await loadAllTask()
-    await loadStats()
   } catch (error) {
     console.error(
       "Erreur lors de la modification de toutes les tâches :",
@@ -204,7 +232,6 @@ async function addingANewTask(taskName, taskDescription, taskDeadline) {
     })
     await loadAllTask()
     await closeAddingTaskPopup()
-    await loadStats()
     location.reload()
   } catch (error) {
     console.error("Erreur lors de l'ajout de la tâche :", error)
@@ -239,29 +266,7 @@ buttonAddTask.addEventListener("click", async () => {
   const taskDescription = document.getElementById("taskDescription").value
   const taskDeadline = document.getElementById("taskDeadline").value
 
-  if (taskName === "" || taskDeadline === "" || taskDescription === "") {
-    alert("Tous les champs sont obligatoires")
-    return
-  }
-
-  if (taskDeadline !== "" && !isValideDate(taskDeadline)) {
-    alert("La date d'echeance doit etre dans le futur")
-    return
-  }
-
-  if (!isString(taskName) || !isNaN(taskName.trim())) {
-    alert(
-      "Le nom de la tâche doit être une chaîne de caractères et ne peut pas être juste un nombre"
-    )
-    return
-  }
-
-  if (!isString(taskDescription) || !isNaN(taskDescription.trim())) {
-    alert(
-      "La description de la tâche doit être une chaîne de caractères et ne peut pas être juste un nombre"
-    )
-    return
-  }
+  if (!validateTaskInputs(taskName, taskDescription, taskDeadline)) return
 
   addingANewTask(taskName, taskDescription, taskDeadline)
 })
@@ -321,7 +326,6 @@ closeNoTasksPopupButton.addEventListener("click", function () {
 showAllTaskButton.addEventListener("click", async () => {
   checkIfNoTask()
   await loadAllTask()
-  await loadStats()
 })
 
 showLatestTaskButton.addEventListener("click", async () => {
